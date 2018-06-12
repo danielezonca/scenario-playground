@@ -110,12 +110,13 @@ public class Utils {
         return simulation;
     }
 
-
-
     static private void generateFactMapping(TableRow header, Simulation simulation, Step step, FactMappingType keyword, ModelFactory modelFactory) {
         List<String> errors = new ArrayList<>();
         Class<?> classMatched = modelFactory.getInstance(step.getText());
         SimulationDescriptor simulationDescriptor = simulation.getSimulationDescriptor();
+        if (simulationDescriptor.getFactMappingsByName(getFactName(step)) != null) {
+            return;
+        }
         FactMapping mappingElement = simulationDescriptor.addGenericObject(keyword, getFactName(step), classMatched);
         for (TableCell tableCell : header.getCells()) {
             String fieldBindingName = tableCell.getValue();
@@ -149,7 +150,7 @@ public class Utils {
         return newMain.orElse(current);
     }
 
-    static private String getFactName(Step step) {
+    static public String getFactName(Step step) {
         return step.getText().replaceAll("\\s+", "");
     }
 
