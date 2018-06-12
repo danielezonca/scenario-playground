@@ -38,6 +38,7 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
         this.releaseId = releaseId;
     }
 
+    // TODO extend to support single scenario run and/or a publish/subscribe mechanism to expose hooks
     @Override
     public List<Map<String, Boolean>> accept(Simulation simulation) {
 
