@@ -11,14 +11,20 @@ import java.util.function.Function;
 import org.apache.commons.beanutils.BeanUtils;
 import org.drools.core.command.impl.ExecutableCommand;
 import org.drools.core.command.runtime.rule.GetObjectsCommand;
+import org.drools.core.fluent.impl.BaseBatchFluent;
 import org.drools.core.fluent.impl.ExecutableImpl;
+import org.drools.core.fluent.impl.KieContainerFluentImpl;
+import org.drools.core.fluent.impl.KieSessionFluentImpl;
 import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.ExecutableRunner;
 import org.kie.api.runtime.RequestContext;
 import org.kie.api.runtime.builder.ExecutableBuilder;
 import org.kie.api.runtime.builder.KieSessionFluent;
+import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.scenarioplayground.scenario.command.AssertConditionCommand;
+import org.kie.scenarioplayground.scenario.command.GetKieContainerCommand;
+import org.kie.scenarioplayground.scenario.command.NewKieSessionCommand;
 import org.kie.scenarioplayground.scenario.model.Expression;
 import org.kie.scenarioplayground.scenario.model.FactMapping;
 import org.kie.scenarioplayground.scenario.model.FactMappingType;
@@ -27,7 +33,7 @@ import org.kie.scenarioplayground.scenario.model.Scenario;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.SimulationDescriptor;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean>>> {
 
@@ -36,6 +42,10 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
     public SimulationRunner(ReleaseId releaseId) {
         this.releaseId = releaseId;
+    }
+
+    public SimulationRunner() {
+        this.releaseId = null;
     }
 
     // TODO extend to support single scenario run and/or a publish/subscribe mechanism to expose hooks
@@ -79,13 +89,11 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
                     } catch (ReflectiveOperationException e) {
                         throw new IllegalArgumentException("Impossible to populate bean '" + factMapping.getClazz().getCanonicalName() + "'");
                     }
-                }
-                else if(FactMappingType.expected.equals(factMapping.getType())) {
+                } else if (FactMappingType.expected.equals(factMapping.getType())) {
                     expected.put(factMapping, params);
                     expectedOperator.put(factMapping, operators);
                 }
             }
-
 
             for (Object o : given.values().stream().flatMap(Collection::stream).collect(toList())) {
                 kieSessionFluent.insert(o);
@@ -97,15 +105,13 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
             for (Map.Entry<FactMapping, Map<String, Object>> factMappingMapEntry : expected.entrySet()) {
                 // TODO merge in a single step/command
-                addGenericCommand(kieSessionFluent, new GetObjectsCommand(new ClassObjectFilter(factMappingMapEntry.getKey().getClazz())));
-                addGenericCommand(kieSessionFluent, new AssertConditionCommand(factMappingMapEntry.getKey().getFactName(), factMappingMapEntry.getValue(), expectedOperator.get(factMappingMapEntry.getKey())));
+                addGenericCommand((BaseBatchFluent<?, ?>) kieSessionFluent, new GetObjectsCommand(new ClassObjectFilter(factMappingMapEntry.getKey().getClazz())));
+                addGenericCommand((BaseBatchFluent<?, ?>) kieSessionFluent, new AssertConditionCommand(factMappingMapEntry.getKey().getFactName(), factMappingMapEntry.getValue(), expectedOperator.get(factMappingMapEntry.getKey())));
             }
 
             kieSessionFluent.dispose();
 
             final RequestContext run = run();
-
-            final Object outS = run.getOutputs().get("outS");
 
             final Map<String, Boolean> expectedResults = (Map<String, Boolean>) run.getOutputs().get(Simulation.RESULT_MAP);
             toReturn.add(expectedResults);
@@ -124,8 +130,12 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
     private KieSessionFluent create() {
         executableBuilder = ExecutableBuilder.create();
 
-        return executableBuilder.newApplicationContext("app1")
-                .getKieContainer(releaseId).newSession();
+        final ExecutableBuilder executableBuilder = this.executableBuilder.newApplicationContext("app1");
+
+        final KieContainerFluentImpl kieContainerFluent = addGenericCommand((BaseBatchFluent<?, ?>) executableBuilder, new GetKieContainerCommand(releaseId), KieContainerFluentImpl::new);
+        final NewKieSessionCommand newKieSessionCommand = new NewKieSessionCommand(null);
+        newKieSessionCommand.setClockTypeOption(ClockTypeOption.get("pseudo"));
+        return addGenericCommand(kieContainerFluent, newKieSessionCommand, KieSessionFluentImpl::new);
     }
 
     private RequestContext run() {
@@ -133,15 +143,30 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
     }
 
     // TODO extend KieSessionFluent to support additional commands and then remove this hack
-    private void addGenericCommand(KieSessionFluent kieSessionFluent, ExecutableCommand<?> t) {
+    private <T> T addGenericCommand(BaseBatchFluent<?, ?> batchFluent, ExecutableCommand<?> t, Function<ExecutableImpl, T> additionalBehavior) {
 
         try {
-            final Field fluentCtxField = kieSessionFluent.getClass().getSuperclass().getDeclaredField("fluentCtx");
+            final Field fluentCtxField = resolveClass(batchFluent.getClass()).getDeclaredField("fluentCtx");
             fluentCtxField.setAccessible(true);
-            ExecutableImpl fluentCtx = (ExecutableImpl) fluentCtxField.get(kieSessionFluent);
+            ExecutableImpl fluentCtx = (ExecutableImpl) fluentCtxField.get(batchFluent);
             fluentCtx.addCommand(t);
+            return additionalBehavior.apply(fluentCtx);
         } catch (ReflectiveOperationException e) {
-            throw new IllegalArgumentException("Impossible to retrieve fluentCtx from '" + kieSessionFluent.getClass().getCanonicalName() + "'");
+            throw new IllegalArgumentException("Impossible to retrieve fluentCtx from '" + batchFluent.getClass().getCanonicalName() + "'");
         }
+    }
+
+    private void addGenericCommand(BaseBatchFluent<?, ?> batchFluent, ExecutableCommand<?> t) {
+        addGenericCommand(batchFluent, t, k -> null);
+    }
+
+    private Class<BaseBatchFluent<?, ?>> resolveClass(Class<?> clazz) {
+        if(BaseBatchFluent.class.equals(clazz)) {
+            return (Class<BaseBatchFluent<?, ?>>) clazz;
+        }
+        if(clazz == null) {
+            throw new IllegalArgumentException();
+        }
+        return resolveClass(clazz.getSuperclass());
     }
 }

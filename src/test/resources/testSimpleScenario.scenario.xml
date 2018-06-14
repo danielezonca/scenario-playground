@@ -1,0 +1,466 @@
+<org.kie.scenarioplayground.scenario.model.Simulation>
+  <simulationDescriptor>
+    <factMappings class="linked-hash-map">
+      <entry>
+        <string>aCase:</string>
+        <org.kie.scenarioplayground.scenario.model.FactMapping>
+          <expressions class="linked-hash-map">
+            <entry>
+              <string>Case Id</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>caseId</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Case Id</name>
+                <clazz>java.lang.Double</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+          </expressions>
+          <factName>aCase:</factName>
+          <type>given</type>
+          <clazz>org.kie.scenarioplayground.model.Case</clazz>
+        </org.kie.scenarioplayground.scenario.model.FactMapping>
+      </entry>
+      <entry>
+        <string>aProduct:</string>
+        <org.kie.scenarioplayground.scenario.model.FactMapping>
+          <expressions class="linked-hash-map">
+            <entry>
+              <string>Subscription Cost</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>subscriptionCost</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Subscription Cost</name>
+                <clazz>java.lang.Double</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+            <entry>
+              <string>Product Name</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>productName</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Product Name</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+          </expressions>
+          <factName>aProduct:</factName>
+          <type>given</type>
+          <clazz>org.kie.scenarioplayground.model.Product</clazz>
+        </org.kie.scenarioplayground.scenario.model.FactMapping>
+      </entry>
+      <entry>
+        <string>someCaseDetail:</string>
+        <org.kie.scenarioplayground.scenario.model.FactMapping>
+          <expressions class="linked-hash-map">
+            <entry>
+              <string>Title</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>title</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Title</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+            <entry>
+              <string>Assignee</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>assignee</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Assignee</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+            <entry>
+              <string>Customer</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>customer</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Customer</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+          </expressions>
+          <factName>someCaseDetail:</factName>
+          <type>given</type>
+          <clazz>org.kie.scenarioplayground.model.CaseDetail</clazz>
+        </org.kie.scenarioplayground.scenario.model.FactMapping>
+      </entry>
+      <entry>
+        <string>someDetailProvided:</string>
+        <org.kie.scenarioplayground.scenario.model.FactMapping>
+          <expressions class="linked-hash-map">
+            <entry>
+              <string>Description</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>description</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Description</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+            <entry>
+              <string>Reproducer</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>reproducer</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Reproducer</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+            <entry>
+              <string>Expected Result</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>expectedResult</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Expected Result</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+          </expressions>
+          <factName>someDetailProvided:</factName>
+          <type>given</type>
+          <clazz>org.kie.scenarioplayground.model.DetailProvided</clazz>
+        </org.kie.scenarioplayground.scenario.model.FactMapping>
+      </entry>
+      <entry>
+        <string>IexpectNextDetail:</string>
+        <org.kie.scenarioplayground.scenario.model.FactMapping>
+          <expressions class="linked-hash-map">
+            <entry>
+              <string>Answer</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>answer</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Answer</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+            <entry>
+              <string>Type</string>
+              <org.kie.scenarioplayground.scenario.model.Expression>
+                <expressionElements class="linked-list">
+                  <org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                    <step>type</step>
+                  </org.kie.scenarioplayground.scenario.model.Expression_-ExpressionElement>
+                </expressionElements>
+                <name>Type</name>
+                <clazz>java.lang.String</clazz>
+              </org.kie.scenarioplayground.scenario.model.Expression>
+            </entry>
+          </expressions>
+          <factName>IexpectNextDetail:</factName>
+          <type>expected</type>
+          <clazz>org.kie.scenarioplayground.model.NextDetail</clazz>
+        </org.kie.scenarioplayground.scenario.model.FactMapping>
+      </entry>
+    </factMappings>
+  </simulationDescriptor>
+  <scenarios class="linked-list">
+    <org.kie.scenarioplayground.scenario.model.Scenario>
+      <description>Example 1</description>
+      <factMappingValues class="linked-hash-map">
+        <entry>
+          <string>aCase:</string>
+          <list>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>aCase:</factName>
+              <bindingName>Case Id</bindingName>
+              <rawValue class="string">10</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+          </list>
+        </entry>
+        <entry>
+          <string>aProduct:</string>
+          <list>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>aProduct:</factName>
+              <bindingName>Subscription Cost</bindingName>
+              <rawValue class="string">150</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>aProduct:</factName>
+              <bindingName>Product Name</bindingName>
+              <rawValue class="string">Product 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+          </list>
+        </entry>
+        <entry>
+          <string>someCaseDetail:</string>
+          <list>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Title</bindingName>
+              <rawValue class="string">Title 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Assignee</bindingName>
+              <rawValue class="string">John</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Customer</bindingName>
+              <rawValue class="string">Customer 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Title</bindingName>
+              <rawValue class="string">Title 2</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Assignee</bindingName>
+              <rawValue class="string">John</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Customer</bindingName>
+              <rawValue class="string">Customer 2</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Title</bindingName>
+              <rawValue class="string">Title 3</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Assignee</bindingName>
+              <rawValue class="string">John</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Customer</bindingName>
+              <rawValue class="string">Customer 3</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Title</bindingName>
+              <rawValue class="string">Title 4</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Assignee</bindingName>
+              <rawValue class="string"></rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Customer</bindingName>
+              <rawValue class="string">Customer 4</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Title</bindingName>
+              <rawValue class="string">Title 5</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Assignee</bindingName>
+              <rawValue class="string">John</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Customer</bindingName>
+              <rawValue class="string">Customer 5</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Title</bindingName>
+              <rawValue class="string">Title 6</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Assignee</bindingName>
+              <rawValue class="string">John</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someCaseDetail:</factName>
+              <bindingName>Customer</bindingName>
+              <rawValue class="string">Customer 6</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+          </list>
+        </entry>
+        <entry>
+          <string>someDetailProvided:</string>
+          <list>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Description</bindingName>
+              <rawValue class="string">Description 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Reproducer</bindingName>
+              <rawValue class="string">Link 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Expected Result</bindingName>
+              <rawValue class="string">Result 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Description</bindingName>
+              <rawValue class="string">Description 2</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Reproducer</bindingName>
+              <rawValue class="string">Link 2</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Expected Result</bindingName>
+              <rawValue class="string">Result 2</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Description</bindingName>
+              <rawValue class="string">Description 3</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Reproducer</bindingName>
+              <rawValue class="string">Link 3</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Expected Result</bindingName>
+              <rawValue class="string">Result 3</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Description</bindingName>
+              <rawValue class="string">Description 4</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Reproducer</bindingName>
+              <rawValue class="string"></rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Expected Result</bindingName>
+              <rawValue class="string">Result 4</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Description</bindingName>
+              <rawValue class="string">Description 5</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Reproducer</bindingName>
+              <rawValue class="string">Link 4</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Expected Result</bindingName>
+              <rawValue class="string">Result 5</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Description</bindingName>
+              <rawValue class="string">Description 6</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Reproducer</bindingName>
+              <rawValue class="string">Link 5</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>someDetailProvided:</factName>
+              <bindingName>Expected Result</bindingName>
+              <rawValue class="string">Result 6</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+          </list>
+        </entry>
+        <entry>
+          <string>IexpectNextDetail:</string>
+          <list>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>IexpectNextDetail:</factName>
+              <bindingName>Answer</bindingName>
+              <rawValue class="string">Update 1</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+            <org.kie.scenarioplayground.scenario.model.FactMappingValue>
+              <factName>IexpectNextDetail:</factName>
+              <bindingName>Type</bindingName>
+              <rawValue class="string">Resolution</rawValue>
+              <operator>equals</operator>
+            </org.kie.scenarioplayground.scenario.model.FactMappingValue>
+          </list>
+        </entry>
+      </factMappingValues>
+    </org.kie.scenarioplayground.scenario.model.Scenario>
+  </scenarios>
+</org.kie.scenarioplayground.scenario.model.Simulation>

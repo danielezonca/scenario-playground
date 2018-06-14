@@ -7,6 +7,7 @@ public class Simulation {
 
     // TODO find a better way to extract assertions results
     public static String RESULT_MAP = "RESULT_MAP";
+    public static String SCENARIO_EXTENSION = "scenario.xml";
 
     private final SimulationDescriptor simulationDescriptor = new SimulationDescriptor();
     private final List<Scenario> scenarios = new LinkedList<>();

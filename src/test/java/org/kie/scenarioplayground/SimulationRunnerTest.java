@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 public class SimulationRunnerTest {
 
-    ScenarioRunner<List<Map<String, Boolean>>> runner = new SimulationRunner(TestUtils.releaseId);
+    ScenarioRunner<List<Map<String, Boolean>>> runner = new SimulationRunner();
 
     @Test
     public void testSimulationRunner() throws IOException {

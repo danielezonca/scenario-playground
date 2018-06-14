@@ -1,6 +1,5 @@
 package org.kie.scenarioplayground;
 
-import com.thoughtworks.xstream.XStream;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -15,7 +14,6 @@ import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.scenarioplayground.model.DetailProvided;
 import org.kie.scenarioplayground.model.NextDetail;
-import org.kie.scenarioplayground.scenario.model.Simulation;
 
 import static org.junit.Assert.assertTrue;
 
@@ -69,22 +67,5 @@ public class TestUtils {
 
         KieModule kieModule = kieBuilder.getKieModule();
         return kieModule.getReleaseId();
-    }
-
-    static String toXml(Simulation simulation) {
-        return initializeXStream().toXML(simulation);
-    }
-
-    static Simulation fromXml(String simulationRaw) {
-        return (Simulation) initializeXStream().fromXML(simulationRaw);
-    }
-
-    // TODO refactor xml output
-    private static XStream initializeXStream() {
-        String[] pattern = new String[] { "org.kie.**" };
-        XStream xStream = new XStream();
-        XStream.setupDefaultSecurity(xStream);
-        xStream.allowTypesByWildcard(pattern);
-        return xStream;
     }
 }

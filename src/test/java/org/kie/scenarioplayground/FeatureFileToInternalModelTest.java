@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.kie.scenarioplayground.cucumber.Utils;
 import org.kie.scenarioplayground.model.ModelFactoryImpl;
 import org.kie.scenarioplayground.scenario.model.Simulation;
+import org.kie.scenarioplayground.scenario.model.marshaller.SimulationMarshaller;
 import org.kie.scenarioplayground.scenario.runner.ScenarioRunner;
 import org.kie.scenarioplayground.scenario.runner.ToStringRunner;
 
@@ -37,14 +38,16 @@ public class FeatureFileToInternalModelTest {
 
     @Test
     public void testXmlSerialization() throws IOException {
+        SimulationMarshaller simulationMarshaller = new SimulationMarshaller();
+
         Feature feature = Utils.toFeature(Utils.readFeatureFileFromResource("testSimpleScenario.feature"));
 
         List<Scenario> scenarioList = Utils.extractByClass(feature.getChildren(), Scenario.class);
 
         final Simulation simulation = Utils.convertScenario(scenarioList, ModelFactoryImpl.get());
 
-        String simulationXml = TestUtils.toXml(simulation);
-        Simulation simulationRestored = TestUtils.fromXml(simulationXml);
+        String simulationXml = simulationMarshaller.toXML(simulation);
+        Simulation simulationRestored = simulationMarshaller.fromXML(simulationXml);
 
         System.out.println("runner.accept(simulation) = " + runner.accept(simulation));
 
