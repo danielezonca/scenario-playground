@@ -16,7 +16,7 @@ Feature: Playground example
       |      10 |
     And a Product:
       | Subscription Cost | Product Name          |
-      |                150 | Product 1            |
+      |               150 | Product 1             |
     And some Case Detail:
       | Title                                                                                   | Assignee          | Customer                          |
       | Title 1                                                                                 | John              | Customer 1                        |
@@ -38,7 +38,7 @@ Feature: Playground example
       |      10 |
     And a Product:
       | Subscription Cost | Product Name          |
-      |                150 | Product 1            |
+      |               150 | Product 1             |
     And some Case Detail:
       | Title                                                                                   | Assignee          | Customer                          |
       | Title 1                                                                                 | John              | Customer 1                        |

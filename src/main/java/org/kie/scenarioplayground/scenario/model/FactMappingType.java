@@ -1,26 +1,30 @@
 package org.kie.scenarioplayground.scenario.model;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public enum FactMappingType {
-    given, expected {
-        @Override
-        String getAlias() {
-            return "when";
-        }
-    };
+    GIVEN,
+    EXPECTED("when");
 
-    public static Optional<FactMappingType> fromString(String toMatch) {
-        for (FactMappingType mappingElementType : values()) {
-            if(mappingElementType.getAlias().equalsIgnoreCase(toMatch.trim())) {
-                return Optional.of(mappingElementType);
-            }
-        }
-        return Optional.empty();
+    private String alias;
+
+    FactMappingType() {
     }
 
-    // TODO define a better mechanism for "alias"
-    String getAlias() {
-        return name();
+    FactMappingType(final String alias) {
+        this.alias = alias;
+    }
+
+    public static Optional<FactMappingType> fromString(final String toMatch) {
+        return Arrays.stream(values())
+                .filter(value -> enumNameOrAliasMatchesTheString(value, toMatch.trim()))
+                .findFirst();
+    }
+
+    private static boolean enumNameOrAliasMatchesTheString(final FactMappingType enumValue, final String stringValue) {
+        final boolean nameMatches = enumValue.name().equalsIgnoreCase(stringValue);
+        final boolean aliasMatches = enumValue.alias != null && enumValue.alias.equalsIgnoreCase(stringValue);
+        return nameMatches || aliasMatches;
     }
 }
