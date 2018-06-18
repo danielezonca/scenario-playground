@@ -5,6 +5,7 @@ import java.util.List;
 
 import gherkin.ast.Feature;
 import gherkin.ast.Scenario;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.kie.scenarioplayground.cucumber.Utils;
 import org.kie.scenarioplayground.model.ModelFactoryImpl;
@@ -34,6 +35,28 @@ public class FeatureFileToInternalModelTest {
         final long convertedFacts = simulation.getSimulationDescriptor().getAllFactMappings().size();
 
         assertEquals(originalFacts, convertedFacts);
+
+        // Three scenarios declared in test.feature
+        // Example 1, Example 2 and Example 3
+        assertEquals(3, simulation.getScenarios().size());
+
+        // Example 1
+        assertEquals("Example 1", simulation.getScenarios().get(0).getDescription());
+        final org.kie.scenarioplayground.scenario.model.Scenario scenarioOne = simulation.getScenarios().get(0);
+        Assertions.assertThat(scenarioOne.getFactNames())
+                .containsExactly("aCase:", "aProduct:", "someCaseDetail:", "IexpectNextDetail:");
+        Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("aCase:")).hasSize(1);
+        Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("aProduct:")).hasSize(2);
+        Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("someCaseDetail:")).hasSize(18);
+        Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("IexpectNextDetail:")).hasSize(2);
+
+        // Example 2
+        assertEquals("Example 2", simulation.getScenarios().get(1).getDescription());
+        assertEquals(5, simulation.getScenarios().get(1).getFactNames().size());
+
+        // Example 3
+        assertEquals("Example 3", simulation.getScenarios().get(2).getDescription());
+        assertEquals(6, simulation.getScenarios().get(2).getFactNames().size());
     }
 
     @Test

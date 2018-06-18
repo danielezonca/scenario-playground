@@ -84,7 +84,7 @@ public class Utils {
 
                 String factName = getFactName(step);
 
-                FactMapping factMapping = simulation.getSimulationDescriptor().getFactMappingsByName(getFactName(step));
+                FactMapping factMapping = simulation.getSimulationDescriptor().getFactMappingsByName(factName);
                 List<Expression> expressions = factMapping.getAllExpressions();
 
                 for (TableRow tableRow : rows.subList(1, rows.size())) {

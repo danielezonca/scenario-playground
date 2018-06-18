@@ -88,3 +88,6 @@ Feature: Playground example
     Then I expect Next Detail:
       | Answer                | Type                   |
       | Update 1              | Resolution             |
+    And another Next Detail:
+      | Answer                | Type                   |
+      | Update 2              | Compensation           |

@@ -30,7 +30,7 @@ public class AssertConditionCommand implements ExecutableCommand<Boolean> {
 
     @Override
     public Boolean execute(Context context) {
-        RequestContextImpl reqContext = (RequestContextImpl)context;
+        RequestContextImpl reqContext = (RequestContextImpl) context;
         @SuppressWarnings("unchecked")
         final Collection<Object> result = (Collection<Object>) reqContext.getResult();
         for (Map.Entry<String, FactMappingValue.Operator> operator : operatorMap.entrySet()) {
@@ -52,7 +52,7 @@ public class AssertConditionCommand implements ExecutableCommand<Boolean> {
 
         // TODO improve outputs method (getOutput(key), contains?)
         final Map<String, Object> actualResult = (Map<String, Object>) reqContext.getOutputs().get(Simulation.RESULT_MAP);
-        if(actualResult == null) {
+        if (actualResult == null) {
             reqContext.setOutput(Simulation.RESULT_MAP, new HashMap<>());
         }
 
