@@ -77,6 +77,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>LATEST</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

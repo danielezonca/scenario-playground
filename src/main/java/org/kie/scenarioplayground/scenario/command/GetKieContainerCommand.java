@@ -19,13 +19,14 @@ public class GetKieContainerCommand
         this.releaseId = releaseId;
     }
 
+    @Override
     public KieContainer execute(Context context) {
         // use the new API to retrieve the session by ID
-        KieServices  kieServices  = KieServices.Factory.get();
+        KieServices kieServices = KieServices.Factory.get();
 
-        KieContainer kieContainer = releaseId != null? kieServices.newKieContainer(releaseId) : kieServices.newKieClasspathContainer();
+        KieContainer kieContainer = releaseId != null ? kieServices.newKieContainer(releaseId) : kieServices.newKieClasspathContainer();
 
-        ((RegistryContext)context).register( KieContainer.class, kieContainer );
+        ((RegistryContext) context).register(KieContainer.class, kieContainer);
         return kieContainer;
     }
 

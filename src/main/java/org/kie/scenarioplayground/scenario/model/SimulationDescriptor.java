@@ -23,11 +23,11 @@ public class SimulationDescriptor {
     }
 
     public FactMapping addGivenObject(String factName, Class<?> clazz) {
-        return addGenericObject(FactMappingType.given, factName, clazz);
+        return addGenericObject(FactMappingType.GIVEN, factName, clazz);
     }
 
     public FactMapping addExpectedObject(String factName, Class<?> clazz) {
-        return addGenericObject(FactMappingType.expected, factName, clazz);
+        return addGenericObject(FactMappingType.EXPECTED, factName, clazz);
     }
 
     public FactMapping addGenericObject(FactMappingType type, String factName, Class<?> clazz) {

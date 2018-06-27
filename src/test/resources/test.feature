@@ -16,7 +16,7 @@ Feature: Playground example
       |      10 |
     And a Product:
       | Subscription Cost | Product Name          |
-      |                150 | Product 1            |
+      |               150 | Product 1             |
     And some Case Detail:
       | Title                                                                                   | Assignee          | Customer                          |
       | Title 1                                                                                 | John              | Customer 1                        |
@@ -38,7 +38,7 @@ Feature: Playground example
       |      10 |
     And a Product:
       | Subscription Cost | Product Name          |
-      |                150 | Product 1            |
+      |               150 | Product 1             |
     And some Case Detail:
       | Title                                                                                   | Assignee          | Customer                          |
       | Title 1                                                                                 | John              | Customer 1                        |
@@ -88,3 +88,6 @@ Feature: Playground example
     Then I expect Next Detail:
       | Answer                | Type                   |
       | Update 1              | Resolution             |
+    And another Next Detail:
+      | Answer                | Type                   |
+      | Update 2              | Compensation           |

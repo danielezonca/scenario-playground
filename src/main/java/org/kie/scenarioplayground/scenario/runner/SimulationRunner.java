@@ -82,14 +82,14 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
                     operators.put(expressionsByName.getFullExpression(), factMappingValue.getOperator());
                 }
 
-                if (FactMappingType.given.equals(factMapping.getType())) {
+                if (FactMappingType.GIVEN.equals(factMapping.getType())) {
                     try {
                         Object instanceToInsert = fillBean(factMapping.getClazz(), params);
                         given.computeIfAbsent(factName, k -> new ArrayList<>()).add(instanceToInsert);
                     } catch (ReflectiveOperationException e) {
                         throw new IllegalArgumentException("Impossible to populate bean '" + factMapping.getClazz().getCanonicalName() + "'");
                     }
-                } else if (FactMappingType.expected.equals(factMapping.getType())) {
+                } else if (FactMappingType.EXPECTED.equals(factMapping.getType())) {
                     expected.put(factMapping, params);
                     expectedOperator.put(factMapping, operators);
                 }
