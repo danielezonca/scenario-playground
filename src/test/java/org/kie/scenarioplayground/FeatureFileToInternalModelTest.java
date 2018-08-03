@@ -32,7 +32,7 @@ public class FeatureFileToInternalModelTest {
         final long originalFacts = scenarioList.stream().flatMap(e -> e.getSteps().stream())
                 // filter unsupported "When" clause
                 .filter(e -> !"when".equalsIgnoreCase(e.getKeyword().trim())).map(Utils::getFactName).distinct().count();
-        final long convertedFacts = simulation.getSimulationDescriptor().getAllFactMappings().size();
+        final long convertedFacts = simulation.getSimulationDescriptor().getFactIdentifiers().size();
 
         assertEquals(originalFacts, convertedFacts);
 

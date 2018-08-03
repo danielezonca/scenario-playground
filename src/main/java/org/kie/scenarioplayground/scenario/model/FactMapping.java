@@ -1,46 +1,47 @@
 package org.kie.scenarioplayground.scenario.model;
 
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 public class FactMapping {
 
-    private final Map<ExpressionIdentifier, Expression> expressions = new LinkedHashMap<>();
-    private final String factName;
-    private final Class<?> clazz;
+    private final List<ExpressionElement> expressionElements = new LinkedList<>();
 
-    public FactMapping(String factName, Class<?> clazz) {
-        this.factName = factName;
+    private final ExpressionIdentifier expressionIdentifier;
+
+    private final FactIdentifier factIdentifier;
+
+    private Class<?> clazz;
+
+    public FactMapping(ExpressionIdentifier expressionIdentifier, FactIdentifier factIdentifier) {
+        this.expressionIdentifier = expressionIdentifier;
+        this.clazz = factIdentifier.getClazz();
+        this.factIdentifier = factIdentifier;
+    }
+
+    public String getFullExpression() {
+        return expressionElements.stream().map(ExpressionElement::getStep).collect(Collectors.joining("."));
+    }
+
+    public List<ExpressionElement> getExpressionElements() {
+        return expressionElements;
+    }
+
+    public void addExpressionElement(String stepName, Class<?> clazz) {
         this.clazz = clazz;
-    }
-
-    public String getFactName() {
-        return factName;
-    }
-
-    public Expression addExpression(String bindingName, FactMappingType type) {
-        ExpressionIdentifier expressionIdentifier = ExpressionIdentifier.identifier(bindingName, type);
-        Expression expression = new Expression(expressionIdentifier, clazz);
-        if(expressions.containsKey(expressionIdentifier)) {
-            throw new IllegalArgumentException("Duplicated binding, name '" + bindingName + "' and type '" + type.name() + "' already exists");
-        }
-        expressions.put(expressionIdentifier, expression);
-        return expression;
-    }
-
-    public List<Expression> getAllExpressions() {
-        return expressions.entrySet().stream().map(Map.Entry::getValue).collect(toList());
-    }
-
-    public Expression getExpressionsByExpressionIdentifier(ExpressionIdentifier expressionIdentifier) {
-        return expressions.get(expressionIdentifier);
+        expressionElements.add(new ExpressionElement(stepName));
     }
 
     public Class<?> getClazz() {
         return clazz;
     }
 
+    public ExpressionIdentifier getExpressionIdentifier() {
+        return expressionIdentifier;
+    }
+
+    public FactIdentifier getFactIdentifier() {
+        return factIdentifier;
+    }
 }

@@ -6,7 +6,6 @@ import org.kie.scenarioplayground.scenario.model.FactMapping;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.SimulationDescriptor;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class ToStringRunner implements ScenarioRunner<String> {
@@ -17,11 +16,11 @@ public class ToStringRunner implements ScenarioRunner<String> {
         SimulationDescriptor simulationDescriptor = simulation.getSimulationDescriptor();
 
 
-        List<FactMapping> allFactMappings = simulationDescriptor.getAllFactMappings();
-        List<String> descriptors = allFactMappings.stream().flatMap(
-                e -> e.getAllExpressions().stream().map(
-                        ex -> ex.getExpressionIdentifier().getType().name() + " " + e.getFactName() + " " + ex.getExpressionIdentifier().getName() + "=" + e.getClazz().getSimpleName() + "." +
-                                ex.getFullExpression())).collect(toList());
+        List<FactMapping> allFactMappings = simulationDescriptor.getFactMappings();
+        List<String> descriptors = allFactMappings.stream().map(
+                        ex -> ex.getExpressionIdentifier().getType().name() + " " + ex.getFactIdentifier().getName() +
+                                " " + ex.getExpressionIdentifier().getName() + "=" + ex.getClazz().getSimpleName() + "." +
+                                ex.getFullExpression()).collect(toList());
 
         result.append("------- SIMULATION DESCRIPTOR -------\n");
         for (String descriptor : descriptors) {

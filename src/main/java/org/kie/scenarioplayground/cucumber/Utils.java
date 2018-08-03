@@ -23,15 +23,15 @@ import gherkin.ast.TableCell;
 import gherkin.ast.TableRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.kie.scenarioplayground.scenario.model.Expression;
 import org.kie.scenarioplayground.scenario.model.ExpressionElement;
+import org.kie.scenarioplayground.scenario.model.ExpressionIdentifier;
+import org.kie.scenarioplayground.scenario.model.FactIdentifier;
 import org.kie.scenarioplayground.scenario.model.FactMapping;
 import org.kie.scenarioplayground.scenario.model.FactMappingType;
 import org.kie.scenarioplayground.scenario.model.FactMappingValue;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.SimulationDescriptor;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class Utils {
@@ -85,23 +85,22 @@ public class Utils {
 
                 String factName = getFactName(step);
 
-                FactMapping factMapping = simulation.getSimulationDescriptor().getFactMappingsByName(factName);
-                List<Expression> expressions = factMapping.getAllExpressions();
+                List<FactMapping> factMappings = simulation.getSimulationDescriptor().getFactMappingsByFactName(factName);
 
                 for (TableRow tableRow : rows.subList(1, rows.size())) {
 
                     List<TableCell> row = tableRow.getCells();
-                    for (int i = 0; i < expressions.size(); i += 1) {
-                        Expression expression = expressions.get(i);
+                    for (int i = 0; i < factMappings.size(); i += 1) {
+                        FactMapping factMapping = factMappings.get(i);
                         TableCell tableCell = row.get(i);
 
                         tableCell.getValue();
 
-                        if (!isCompatible(factMapping.getClazz(), expression.getExpressionElements(), tableCell.getValue())) {
+                        if (!isCompatible(factMapping.getFactIdentifier().getClazz(), factMapping.getExpressionElements(), tableCell.getValue())) {
                             throw new IllegalArgumentException("Value '" + tableCell.getValue() + "' is not compatible with '" + factMapping.getClazz().getCanonicalName() + "'");
                         }
 
-                        FactMappingValue factMappingValue = new FactMappingValue(factName, expression.getExpressionIdentifier(), tableCell.getValue());
+                        FactMappingValue factMappingValue = new FactMappingValue(factName, factMapping.getExpressionIdentifier(), tableCell.getValue());
 
                         internalScenario.addMappingValue(factMappingValue);
                     }
@@ -115,19 +114,21 @@ public class Utils {
         List<String> errors = new ArrayList<>();
         Class<?> classMatched = modelFactory.getInstance(step.getText());
         SimulationDescriptor simulationDescriptor = simulation.getSimulationDescriptor();
-        if (simulationDescriptor.getFactMappingsByName(getFactName(step)) != null) {
+        List<FactMapping> factMappingsByFactName = simulationDescriptor.getFactMappingsByFactName(getFactName(step));
+        if (factMappingsByFactName != null && factMappingsByFactName.size() > 0) {
             return;
         }
-        FactMapping mappingElement = simulationDescriptor.addGenericObject(getFactName(step), classMatched);
+        FactIdentifier factIdentifier = simulationDescriptor.newFactIdentifier(getFactName(step), classMatched);
         for (TableCell tableCell : header.getCells()) {
             String fieldBindingName = tableCell.getValue();
             String fieldName = Introspector.decapitalize(WordUtils.capitalizeFully(fieldBindingName).replaceAll("\\s+", ""));
+            ExpressionIdentifier expressionIdentifier = ExpressionIdentifier.identifier(fieldBindingName, factMappingType);
             if (checkExpressionStep(classMatched, fieldName)) {
-                Expression expression = mappingElement.addExpression(fieldBindingName, factMappingType);
-                Class<?> currentClazz = expression.getClazz();
+                FactMapping factMapping = simulationDescriptor.addFactMapping(expressionIdentifier, factIdentifier);
+                Class<?> currentClazz = factMapping.getClazz();
                 try {
                     Class<?> clazz = currentClazz.getDeclaredField(fieldName).getType();
-                    expression.addExpressionElement(fieldName, clazz);
+                    factMapping.addExpressionElement(fieldName, clazz);
                 } catch (NoSuchFieldException e) {
                     throw new IllegalArgumentException("Impossible to find a field with name '" + fieldName + "' in class '" + currentClazz.getCanonicalName() + "'");
                 }
