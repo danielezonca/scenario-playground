@@ -4,6 +4,7 @@ import java.beans.Introspector;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -12,6 +13,7 @@ import cucumber.runtime.model.CucumberFeature;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
+import gherkin.ast.Background;
 import gherkin.ast.DataTable;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
@@ -55,59 +57,71 @@ public class Utils {
     }
 
     public static Simulation convertScenario(List<Scenario> scenarioList, ModelFactory modelFactory) {
+        return convertScenarioWithBackground(scenarioList, Collections.emptyList(), modelFactory);
+    }
+
+    public static Simulation convertScenarioWithBackground(List<Scenario> scenarioList, List<Background> backgroundList, ModelFactory modelFactory) {
 
         Simulation simulation = new Simulation();
+
+        for (Background background : backgroundList) {
+            org.kie.scenarioplayground.scenario.model.Scenario internalPrecondition = simulation.addPrecondition(background.getName());
+            scenarioOrBackgroundConverter(modelFactory, simulation, background, internalPrecondition);
+        }
+
         for (Scenario scenario : scenarioList) {
-
-            List<Step> steps = scenario.getSteps();
-
             org.kie.scenarioplayground.scenario.model.Scenario internalScenario = simulation.addScenario(scenario.getName());
+            scenarioOrBackgroundConverter(modelFactory, simulation, scenario, internalScenario);
+        }
+        return simulation;
+    }
 
-            FactMappingType mainKeyword = null;
-            for (Step step : steps) {
-                String keyword = step.getKeyword();
-                mainKeyword = computeMainKeyword(mainKeyword, keyword);
-                Node argument = step.getArgument();
+    private static void scenarioOrBackgroundConverter(ModelFactory modelFactory, Simulation simulation, ScenarioDefinition scenario, org.kie.scenarioplayground.scenario.model.Scenario internalScenario) {
+        List<Step> steps = scenario.getSteps();
 
-                if (!(argument instanceof DataTable)) {
-                    continue;
-                }
+        FactMappingType mainKeyword = null;
+        for (Step step : steps) {
+            String keyword = step.getKeyword();
+            mainKeyword = computeMainKeyword(mainKeyword, keyword);
+            Node argument = step.getArgument();
 
-                DataTable values = (DataTable) argument;
-                List<TableRow> rows = values.getRows();
-                if (rows.size() < 1) {
-                    throw new IllegalArgumentException("Malformed line: " + values);
-                }
+            if (!(argument instanceof DataTable)) {
+                continue;
+            }
 
-                TableRow header = rows.get(0);
-                generateFactMapping(header, simulation, step, mainKeyword, modelFactory);
+            DataTable values = (DataTable) argument;
+            List<TableRow> rows = values.getRows();
+            if (rows.size() < 1) {
+                throw new IllegalArgumentException("Malformed line: " + values);
+            }
 
-                String factName = getFactName(step);
+            TableRow header = rows.get(0);
+            generateFactMapping(header, simulation, step, mainKeyword, modelFactory);
 
-                FactMapping factMapping = simulation.getSimulationDescriptor().getFactMappingsByName(factName);
-                List<Expression> expressions = factMapping.getAllExpressions();
+            String factName = getFactName(step);
 
-                for (TableRow tableRow : rows.subList(1, rows.size())) {
+            FactMapping factMapping = simulation.getSimulationDescriptor().getFactMappingsByName(factName);
+            List<Expression> expressions = factMapping.getAllExpressions();
 
-                    List<TableCell> row = tableRow.getCells();
-                    for (int i = 0; i < expressions.size(); i += 1) {
-                        Expression expression = expressions.get(i);
-                        TableCell tableCell = row.get(i);
+            for (TableRow tableRow : rows.subList(1, rows.size())) {
 
-                        tableCell.getValue();
+                List<TableCell> row = tableRow.getCells();
+                for (int i = 0; i < expressions.size(); i += 1) {
+                    Expression expression = expressions.get(i);
+                    TableCell tableCell = row.get(i);
 
-                        if (!isCompatible(factMapping.getClazz(), expression.getExpressionElements(), tableCell.getValue())) {
-                            throw new IllegalArgumentException("Value '" + tableCell.getValue() + "' is not compatible with '" + factMapping.getClazz().getCanonicalName() + "'");
-                        }
+                    tableCell.getValue();
 
-                        FactMappingValue factMappingValue = new FactMappingValue(factName, expression.getName(), tableCell.getValue());
-
-                        internalScenario.addMappingValue(factMappingValue);
+                    if (!isCompatible(factMapping.getClazz(), expression.getExpressionElements(), tableCell.getValue())) {
+                        throw new IllegalArgumentException("Value '" + tableCell.getValue() + "' is not compatible with '" + factMapping.getClazz().getCanonicalName() + "'");
                     }
+
+                    FactMappingValue factMappingValue = new FactMappingValue(factName, expression.getName(), tableCell.getValue());
+
+                    internalScenario.addMappingValue(factMappingValue);
                 }
             }
         }
-        return simulation;
     }
 
     static private void generateFactMapping(TableRow header, Simulation simulation, Step step, FactMappingType keyword, ModelFactory modelFactory) {

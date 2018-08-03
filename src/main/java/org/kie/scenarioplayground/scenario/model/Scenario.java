@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toList;
 public class Scenario {
 
     private final String description;
-    private final Map<String, List<FactMappingValue>> factMappingValues = new LinkedHashMap<>();
+    protected final Map<String, List<FactMappingValue>> factMappingValues = new LinkedHashMap<>();
 
     public Scenario(String description) {
         this.description = description;

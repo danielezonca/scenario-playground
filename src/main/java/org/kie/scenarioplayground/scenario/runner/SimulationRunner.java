@@ -4,36 +4,33 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.drools.core.command.impl.ExecutableCommand;
-import org.drools.core.command.runtime.rule.GetObjectsCommand;
 import org.drools.core.fluent.impl.BaseBatchFluent;
 import org.drools.core.fluent.impl.ExecutableImpl;
 import org.drools.core.fluent.impl.KieContainerFluentImpl;
 import org.drools.core.fluent.impl.KieSessionFluentImpl;
 import org.kie.api.builder.ReleaseId;
-import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.ExecutableRunner;
 import org.kie.api.runtime.RequestContext;
 import org.kie.api.runtime.builder.ExecutableBuilder;
 import org.kie.api.runtime.builder.KieSessionFluent;
 import org.kie.api.runtime.conf.ClockTypeOption;
-import org.kie.scenarioplayground.scenario.command.AssertConditionCommand;
 import org.kie.scenarioplayground.scenario.command.GetKieContainerCommand;
 import org.kie.scenarioplayground.scenario.command.NewKieSessionCommand;
 import org.kie.scenarioplayground.scenario.model.Expression;
 import org.kie.scenarioplayground.scenario.model.FactMapping;
 import org.kie.scenarioplayground.scenario.model.FactMappingType;
 import org.kie.scenarioplayground.scenario.model.FactMappingValue;
+import org.kie.scenarioplayground.scenario.model.Precondition;
 import org.kie.scenarioplayground.scenario.model.Scenario;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.SimulationDescriptor;
-
-import static java.util.stream.Collectors.toList;
 
 public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean>>> {
 
@@ -56,68 +53,84 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
         SimulationDescriptor simulationDescriptor = simulation.getSimulationDescriptor();
 
+        List<Object> preconditions = new LinkedList<>();
+
         Map<String, List<Object>> given = new HashMap<>();
 
         // TODO refactor to a single container object
         Map<FactMapping, Map<String, Object>> expected = new HashMap<>();
         Map<FactMapping, Map<String, FactMappingValue.Operator>> expectedOperator = new HashMap<>();
 
+        for (Precondition precondition : simulation.getPreconditions()) {
+            tmp(simulationDescriptor, given, expected, expectedOperator, precondition);
+//            ljnlj
+        }
+
         for (Scenario scenario : simulation.getScenarios()) {
 
             final KieSessionFluent kieSessionFluent = create();
 
-            for (String factName : scenario.getFactNames()) {
+            tmp(simulationDescriptor, given, expected, expectedOperator, scenario);
 
-                Map<String, Object> params = new HashMap<>();
-                Map<String, FactMappingValue.Operator> operators = new HashMap<>();
-                FactMapping factMapping = simulationDescriptor.getFactMappingsByName(factName);
-
-                for (FactMappingValue factMappingValue : scenario.getFactMappingValuesByFactName(factName)) {
-
-                    Expression expressionsByName = factMapping.getExpressionsByName(factMappingValue.getBindingName());
-
-                    final Function<Object, ?> converter = expressionsByName.getConverter();
-
-                    params.put(expressionsByName.getFullExpression(), converter.apply(factMappingValue.getRawValue()));
-                    operators.put(expressionsByName.getFullExpression(), factMappingValue.getOperator());
-                }
-
-                if (FactMappingType.GIVEN.equals(factMapping.getType())) {
-                    try {
-                        Object instanceToInsert = fillBean(factMapping.getClazz(), params);
-                        given.computeIfAbsent(factName, k -> new ArrayList<>()).add(instanceToInsert);
-                    } catch (ReflectiveOperationException e) {
-                        throw new IllegalArgumentException("Impossible to populate bean '" + factMapping.getClazz().getCanonicalName() + "'");
-                    }
-                } else if (FactMappingType.EXPECTED.equals(factMapping.getType())) {
-                    expected.put(factMapping, params);
-                    expectedOperator.put(factMapping, operators);
-                }
-            }
-
-            for (Object o : given.values().stream().flatMap(Collection::stream).collect(toList())) {
-                kieSessionFluent.insert(o);
-            }
+            given.values().stream().flatMap(Collection::stream).forEach(kieSessionFluent::insert);
 
             kieSessionFluent.fireAllRules()
                     .getGlobal("outS")
                     .out("outS");
-
-            for (Map.Entry<FactMapping, Map<String, Object>> factMappingMapEntry : expected.entrySet()) {
-                // TODO merge in a single step/command
-                addGenericCommand((BaseBatchFluent<?, ?>) kieSessionFluent, new GetObjectsCommand(new ClassObjectFilter(factMappingMapEntry.getKey().getClazz())));
-                addGenericCommand((BaseBatchFluent<?, ?>) kieSessionFluent, new AssertConditionCommand(factMappingMapEntry.getKey().getFactName(), factMappingMapEntry.getValue(), expectedOperator.get(factMappingMapEntry.getKey())));
-            }
+//
+//            for (Map.Entry<FactMapping, Map<String, Object>> factMappingMapEntry : expected.entrySet()) {
+//                // TODO merge in a single step/command
+//                addGenericCommand((BaseBatchFluent<?, ?>) kieSessionFluent, new GetObjectsCommand(new ClassObjectFilter(factMappingMapEntry.getKey().getClazz())));
+//                addGenericCommand((BaseBatchFluent<?, ?>) kieSessionFluent, new AssertConditionCommand(factMappingMapEntry.getKey().getFactName(), factMappingMapEntry.getValue(), expectedOperator.get(factMappingMapEntry.getKey())));
+//            }
 
             kieSessionFluent.dispose();
 
             final RequestContext run = run();
+
+            for (Map.Entry<FactMapping, Map<String, Object>> factMappingMapEntry : expected.entrySet()) {
+
+                final Class<?> clazz = factMappingMapEntry.getKey().getClazz();
+//                given.values().stream().filter(e -> clazz.isAssignableFrom(e.getClass())).
+            }
 
             final Map<String, Boolean> expectedResults = (Map<String, Boolean>) run.getOutputs().get(Simulation.RESULT_MAP);
             toReturn.add(expectedResults);
         }
 
         return toReturn;
+    }
+
+    private void tmp(SimulationDescriptor simulationDescriptor, Map<String, List<Object>> given, Map<FactMapping, Map<String, Object>> expected, Map<FactMapping, Map<String, FactMappingValue.Operator>> expectedOperator, Scenario scenario) {
+        for (String factName : scenario.getFactNames()) {
+
+
+            FactMapping factMapping = simulationDescriptor.getFactMappingsByName(factName);
+            Map<String, Object> params = new HashMap<>();
+            Map<String, FactMappingValue.Operator> operators = new HashMap<>();
+
+            for (FactMappingValue factMappingValue : scenario.getFactMappingValuesByFactName(factName)) {
+
+                Expression expressionsByName = factMapping.getExpressionsByName(factMappingValue.getBindingName());
+
+                final Function<Object, ?> converter = expressionsByName.getConverter();
+
+                params.put(expressionsByName.getFullExpression(), converter.apply(factMappingValue.getRawValue()));
+                operators.put(expressionsByName.getFullExpression(), factMappingValue.getOperator());
+            }
+
+            if (FactMappingType.GIVEN.equals(factMapping.getType())) {
+                try {
+                    Object instanceToInsert = fillBean(factMapping.getClazz(), params);
+                    given.computeIfAbsent(factName, k -> new ArrayList<>()).add(instanceToInsert);
+                } catch (ReflectiveOperationException e) {
+                    throw new IllegalArgumentException("Impossible to populate bean '" + factMapping.getClazz().getCanonicalName() + "'");
+                }
+            } else if (FactMappingType.EXPECTED.equals(factMapping.getType())) {
+                expected.put(factMapping, params);
+                expectedOperator.put(factMapping, operators);
+            }
+        }
     }
 
     private <T> T fillBean(Class<T> clazz, Map<String, Object> params) throws ReflectiveOperationException {
@@ -161,12 +174,18 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
     }
 
     private Class<BaseBatchFluent<?, ?>> resolveClass(Class<?> clazz) {
-        if(BaseBatchFluent.class.equals(clazz)) {
+        if (BaseBatchFluent.class.equals(clazz)) {
             return (Class<BaseBatchFluent<?, ?>>) clazz;
         }
-        if(clazz == null) {
+        if (clazz == null) {
             throw new IllegalArgumentException();
         }
         return resolveClass(clazz.getSuperclass());
     }
+
+    private class ExpectedDefinition {
+
+
+    }
+
 }

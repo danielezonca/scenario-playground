@@ -3,6 +3,7 @@ package org.kie.scenarioplayground;
 import java.io.IOException;
 import java.util.List;
 
+import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.Scenario;
 import org.assertj.core.api.Assertions;
@@ -26,6 +27,7 @@ public class FeatureFileToInternalModelTest {
         Feature feature = Utils.toFeature(Utils.readFeatureFileFromResource("test.feature"));
 
         List<Scenario> scenarioList = Utils.extractByClass(feature.getChildren(), Scenario.class);
+        List<Background> backgroundList = Utils.extractByClass(feature.getChildren(), Background.class);
 
         final Simulation simulation = Utils.convertScenario(scenarioList, ModelFactoryImpl.get());
 
@@ -70,6 +72,7 @@ public class FeatureFileToInternalModelTest {
         final Simulation simulation = Utils.convertScenario(scenarioList, ModelFactoryImpl.get());
 
         String simulationXml = simulationMarshaller.toXML(simulation);
+        System.out.println("simulationXml = " + simulationXml);
         Simulation simulationRestored = simulationMarshaller.fromXML(simulationXml);
 
         System.out.println("runner.accept(simulation) = " + runner.accept(simulation));

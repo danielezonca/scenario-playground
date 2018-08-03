@@ -11,11 +11,14 @@ public class Simulation {
 
     private final SimulationDescriptor simulationDescriptor = new SimulationDescriptor();
     private final List<Scenario> scenarios = new LinkedList<>();
-
-    // TODO add support to preconditions shared between scenarios (aka Background)
+    private final List<Precondition> preconditions = new LinkedList<>();
 
     public List<Scenario> getScenarios() {
         return scenarios;
+    }
+
+    public List<Precondition> getPreconditions() {
+        return preconditions;
     }
 
     public SimulationDescriptor getSimulationDescriptor() {
@@ -26,6 +29,12 @@ public class Simulation {
         Scenario scenario = new Scenario(name);
         scenarios.add(scenario);
         return scenario;
+    }
+
+    public Precondition addPrecondition(String name) {
+        Precondition precondition = new Precondition(name, simulationDescriptor);
+        preconditions.add(precondition);
+        return precondition;
     }
 
 }
