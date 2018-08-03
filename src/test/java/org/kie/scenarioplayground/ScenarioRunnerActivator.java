@@ -6,7 +6,4 @@ import org.kie.scenarioplayground.scenario.runner.ScenarioJunitRunner;
 @RunWith(ScenarioJunitRunner.class)
 public class ScenarioRunnerActivator {
 
-    {
-//        KieServices.get().getResources().newClassPathResource().
-    }
 }

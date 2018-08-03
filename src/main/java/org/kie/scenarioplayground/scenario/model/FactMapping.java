@@ -8,7 +8,7 @@ import static java.util.stream.Collectors.toList;
 
 public class FactMapping {
 
-    private final Map<Expression.ExpressionIdentifier, Expression> expressions = new LinkedHashMap<>();
+    private final Map<ExpressionIdentifier, Expression> expressions = new LinkedHashMap<>();
     private final String factName;
     private final Class<?> clazz;
 
@@ -22,7 +22,7 @@ public class FactMapping {
     }
 
     public Expression addExpression(String bindingName, FactMappingType type) {
-        Expression.ExpressionIdentifier expressionIdentifier = Expression.identifier(bindingName, type);
+        ExpressionIdentifier expressionIdentifier = ExpressionIdentifier.identifier(bindingName, type);
         Expression expression = new Expression(expressionIdentifier, clazz);
         if(expressions.containsKey(expressionIdentifier)) {
             throw new IllegalArgumentException("Duplicated binding, name '" + bindingName + "' and type '" + type.name() + "' already exists");
@@ -35,7 +35,7 @@ public class FactMapping {
         return expressions.entrySet().stream().map(Map.Entry::getValue).collect(toList());
     }
 
-    public Expression getExpressionsByExpressionIdentifier(Expression.ExpressionIdentifier expressionIdentifier) {
+    public Expression getExpressionsByExpressionIdentifier(ExpressionIdentifier expressionIdentifier) {
         return expressions.get(expressionIdentifier);
     }
 

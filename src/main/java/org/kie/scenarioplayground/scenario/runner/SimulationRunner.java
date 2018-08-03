@@ -33,6 +33,8 @@ import org.kie.scenarioplayground.scenario.model.FactMappingValue;
 import org.kie.scenarioplayground.scenario.model.Scenario;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.SimulationDescriptor;
+import org.kie.scenarioplayground.scenario.utils.ClassConverterFactory;
+import org.kie.scenarioplayground.scenario.utils.Constants;
 
 import static java.util.stream.Collectors.toList;
 
@@ -77,7 +79,7 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
                     Expression expressionsByName = factMapping.getExpressionsByExpressionIdentifier(factMappingValue.getExpressionIdentifier());
 
-                    final Function<Object, ?> converter = expressionsByName.getConverter();
+                    final Function<Object, ?> converter = ClassConverterFactory.getConverter(expressionsByName.getClazz());
 
                     params.put(expressionsByName, converter.apply(factMappingValue.getRawValue()));
                     operators.put(expressionsByName, factMappingValue.getOperator());
@@ -120,7 +122,7 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
             final RequestContext run = run();
 
-            final Map<String, Boolean> expectedResults = (Map<String, Boolean>) run.getOutputs().get(Simulation.RESULT_MAP);
+            final Map<String, Boolean> expectedResults = (Map<String, Boolean>) run.getOutputs().get(Constants.RESULT_MAP);
             toReturn.add(expectedResults);
         }
 

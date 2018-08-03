@@ -24,6 +24,7 @@ import gherkin.ast.TableRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.kie.scenarioplayground.scenario.model.Expression;
+import org.kie.scenarioplayground.scenario.model.ExpressionElement;
 import org.kie.scenarioplayground.scenario.model.FactMapping;
 import org.kie.scenarioplayground.scenario.model.FactMappingType;
 import org.kie.scenarioplayground.scenario.model.FactMappingValue;
@@ -123,13 +124,20 @@ public class Utils {
             String fieldName = Introspector.decapitalize(WordUtils.capitalizeFully(fieldBindingName).replaceAll("\\s+", ""));
             if (checkExpressionStep(classMatched, fieldName)) {
                 Expression expression = mappingElement.addExpression(fieldBindingName, factMappingType);
-                expression.addExpressionElement(fieldName);
+                Class<?> currentClazz = expression.getClazz();
+                try {
+                    Class<?> clazz = currentClazz.getDeclaredField(fieldName).getType();
+                    expression.addExpressionElement(fieldName, clazz);
+                } catch (NoSuchFieldException e) {
+                    throw new IllegalArgumentException("Impossible to find a field with name '" + fieldName + "' in class '" + currentClazz.getCanonicalName() + "'");
+                }
             } else {
                 errors.add(fieldName);
             }
         }
         if (errors.size() > 0) {
-            throw new IllegalArgumentException("Impossible to find in '" + classMatched.getCanonicalName() + "' the following fields: " + errors.stream().collect(joining(", ")));
+            throw new IllegalArgumentException("Impossible to find in '" +
+                                                       classMatched.getCanonicalName() + "' the following fields: " + String.join(", ", errors));
         }
     }
 
@@ -143,7 +151,7 @@ public class Utils {
     }
 
     static private FactMappingType computeMainKeyword(FactMappingType current, String toCompute) {
-        Optional<FactMappingType> newMain = FactMappingType.fromString(toCompute);
+        Optional<FactMappingType> newMain = CucumberFactMappingTypeFactory.stringToFactMappingType(toCompute);
         if (current == null) {
             return newMain.orElseThrow(IllegalArgumentException::new);
         }
@@ -154,7 +162,7 @@ public class Utils {
         return step.getText().replaceAll("\\s+", "");
     }
 
-    static private boolean isCompatible(Class<?> clazz, List<Expression.ExpressionElement> expressions, String value) {
+    static private boolean isCompatible(Class<?> clazz, List<ExpressionElement> expressions, String value) {
         if (expressions.size() < 1) {
             throw new IllegalArgumentException("No expression defined");
         }

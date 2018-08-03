@@ -1,0 +1,17 @@
+package org.kie.scenarioplayground
+
+import org.kie.scenarioplayground.model.DetailProvided
+import org.kie.scenarioplayground.model.NextDetail
+
+global Integer outS;
+
+rule R1 when
+   s : DetailProvided()
+then
+    Integer o = (Integer) kcontext.getKnowledgeRuntime().getGlobal("outS");
+    NextDetail nd = new NextDetail();
+    nd.setAnswer("Update 1");
+    nd.setType("Resolution");
+    insert(nd);
+    kcontext.getKnowledgeRuntime().setGlobal("outS", o == null ? 1 : o + 1);
+end

@@ -6,17 +6,17 @@ import java.util.function.BiFunction;
 public class FactMappingValue {
 
     private final String factName;
-    private final Expression.ExpressionIdentifier expressionIdentifier;
+    private final ExpressionIdentifier expressionIdentifier;
     private final Object rawValue;
     private Operator operator = Operator.equals;
 
-    public FactMappingValue(String factName, Expression.ExpressionIdentifier expressionIdentifier, Object rawValue) {
+    public FactMappingValue(String factName, ExpressionIdentifier expressionIdentifier, Object rawValue) {
         this.factName = factName;
         this.expressionIdentifier = expressionIdentifier;
         this.rawValue = rawValue;
     }
 
-    public FactMappingValue(String factName, Expression.ExpressionIdentifier expressionIdentifier, Object rawValue, Operator operator) {
+    public FactMappingValue(String factName, ExpressionIdentifier expressionIdentifier, Object rawValue, Operator operator) {
         this(factName, expressionIdentifier, rawValue);
         this.operator = operator;
     }
@@ -25,7 +25,7 @@ public class FactMappingValue {
         return factName;
     }
 
-    public Expression.ExpressionIdentifier getExpressionIdentifier() {
+    public ExpressionIdentifier getExpressionIdentifier() {
         return expressionIdentifier;
     }
 

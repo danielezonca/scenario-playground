@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.marshaller.SimulationMarshaller;
+import org.kie.scenarioplayground.scenario.utils.Constants;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -30,7 +30,7 @@ public class ScenarioJunitRunner extends ParentRunner<Simulation> {
 
         // TODO evaluate if keep this method or implement an alternative
         final PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver(this.getClass().getClassLoader());
-        final Resource[] resources = pathMatchingResourcePatternResolver.getResources("*." + Simulation.SCENARIO_EXTENSION);
+        final Resource[] resources = pathMatchingResourcePatternResolver.getResources("*." + Constants.SCENARIO_EXTENSION);
 
         for (Resource resource : resources) {
             Scanner scanner = new Scanner(new File(resource.getURI()));

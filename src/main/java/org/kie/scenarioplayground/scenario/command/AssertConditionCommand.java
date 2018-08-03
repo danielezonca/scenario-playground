@@ -9,7 +9,7 @@ import org.drools.core.command.RequestContextImpl;
 import org.drools.core.command.impl.ExecutableCommand;
 import org.kie.api.runtime.Context;
 import org.kie.scenarioplayground.scenario.model.FactMappingValue;
-import org.kie.scenarioplayground.scenario.model.Simulation;
+import org.kie.scenarioplayground.scenario.utils.Constants;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -51,12 +51,12 @@ public class AssertConditionCommand implements ExecutableCommand<Boolean> {
         final boolean factVerified = matched.values().stream().allMatch(Boolean::booleanValue);
 
         // TODO improve outputs method (getOutput(key), contains?)
-        final Map<String, Object> actualResult = (Map<String, Object>) reqContext.getOutputs().get(Simulation.RESULT_MAP);
+        final Map<String, Object> actualResult = (Map<String, Object>) reqContext.getOutputs().get(Constants.RESULT_MAP);
         if (actualResult == null) {
-            reqContext.setOutput(Simulation.RESULT_MAP, new HashMap<>());
+            reqContext.setOutput(Constants.RESULT_MAP, new HashMap<>());
         }
 
-        Map<String, Object> resultMap = (Map<String, Object>) reqContext.getOutputs().get(Simulation.RESULT_MAP);
+        Map<String, Object> resultMap = (Map<String, Object>) reqContext.getOutputs().get(Constants.RESULT_MAP);
 
         // TODO extend to support detailed results
         resultMap.put(factName, factVerified);

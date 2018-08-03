@@ -1,4 +1,4 @@
-package org.kie.scenarioplayground;
+package org.kie.scenarioplayground.util;
 
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
