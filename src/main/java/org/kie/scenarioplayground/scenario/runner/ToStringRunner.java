@@ -20,7 +20,7 @@ public class ToStringRunner implements ScenarioRunner<String> {
         List<FactMapping> allFactMappings = simulationDescriptor.getAllFactMappings();
         List<String> descriptors = allFactMappings.stream().flatMap(
                 e -> e.getAllExpressions().stream().map(
-                        ex -> e.getType().name() + " " + e.getFactName() + " " + ex.getName() + "=" + e.getClazz().getSimpleName() + "." +
+                        ex -> ex.getExpressionIdentifier().getType().name() + " " + e.getFactName() + " " + ex.getExpressionIdentifier().getName() + "=" + e.getClazz().getSimpleName() + "." +
                                 ex.getFullExpression())).collect(toList());
 
         result.append("------- SIMULATION DESCRIPTOR -------\n");
@@ -30,7 +30,8 @@ public class ToStringRunner implements ScenarioRunner<String> {
         }
 
         result.append("\n------- SCENARIO -------\n");
-        List<String> scenarios = simulation.getScenarios().stream().flatMap(scenario -> scenario.getFactMappingValues().stream().map(e -> e.getFactName() + " " + e.getBindingName() + "=" + e.getRawValue())).collect(toList());
+        List<String> scenarios = simulation.getScenarios().stream().flatMap(scenario -> scenario.getFactMappingValues().stream().map(e -> e.getFactName() +
+                " " + e.getExpressionIdentifier().getName() + "=" + e.getRawValue())).collect(toList());
 
         for (String scenario : scenarios) {
             result.append(scenario);

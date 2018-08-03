@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.drools.core.command.impl.ExecutableCommand;
@@ -68,31 +69,37 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
             for (String factName : scenario.getFactNames()) {
 
-                Map<String, Object> params = new HashMap<>();
-                Map<String, FactMappingValue.Operator> operators = new HashMap<>();
+                Map<Expression, Object> params = new HashMap<>();
+                Map<Expression, FactMappingValue.Operator> operators = new HashMap<>();
                 FactMapping factMapping = simulationDescriptor.getFactMappingsByName(factName);
 
                 for (FactMappingValue factMappingValue : scenario.getFactMappingValuesByFactName(factName)) {
 
-                    Expression expressionsByName = factMapping.getExpressionsByName(factMappingValue.getBindingName());
+                    Expression expressionsByName = factMapping.getExpressionsByExpressionIdentifier(factMappingValue.getExpressionIdentifier());
 
                     final Function<Object, ?> converter = expressionsByName.getConverter();
 
-                    params.put(expressionsByName.getFullExpression(), converter.apply(factMappingValue.getRawValue()));
-                    operators.put(expressionsByName.getFullExpression(), factMappingValue.getOperator());
+                    params.put(expressionsByName, converter.apply(factMappingValue.getRawValue()));
+                    operators.put(expressionsByName, factMappingValue.getOperator());
                 }
 
-                if (FactMappingType.GIVEN.equals(factMapping.getType())) {
+                Map<String, Object> paramsGiven = filterByType(params, FactMappingType.GIVEN);
+                Map<String, Object> paramsExpected = filterByType(params, FactMappingType.EXPECTED);
+                Map<String, FactMappingValue.Operator> operatorsExpected = filterByType(operators, FactMappingType.EXPECTED);
+
+                if(!paramsGiven.isEmpty()) {
                     try {
-                        Object instanceToInsert = fillBean(factMapping.getClazz(), params);
+                        Object instanceToInsert = fillBean(factMapping.getClazz(), paramsGiven);
                         given.computeIfAbsent(factName, k -> new ArrayList<>()).add(instanceToInsert);
                     } catch (ReflectiveOperationException e) {
                         throw new IllegalArgumentException("Impossible to populate bean '" + factMapping.getClazz().getCanonicalName() + "'");
                     }
-                } else if (FactMappingType.EXPECTED.equals(factMapping.getType())) {
-                    expected.put(factMapping, params);
-                    expectedOperator.put(factMapping, operators);
                 }
+                if(!paramsExpected.isEmpty()) {
+                    expected.put(factMapping, paramsExpected);
+                    expectedOperator.put(factMapping, operatorsExpected);
+                }
+
             }
 
             for (Object o : given.values().stream().flatMap(Collection::stream).collect(toList())) {
@@ -118,6 +125,12 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
         }
 
         return toReturn;
+    }
+
+    private <X> Map<String, X> filterByType(Map<Expression, X> input, FactMappingType filter) {
+        return input.entrySet().stream()
+                .filter(e -> filter.equals(e.getKey().getExpressionIdentifier().getType()))
+                .collect(Collectors.toMap(e -> e.getKey().getFullExpression(), Map.Entry::getValue));
     }
 
     private <T> T fillBean(Class<T> clazz, Map<String, Object> params) throws ReflectiveOperationException {

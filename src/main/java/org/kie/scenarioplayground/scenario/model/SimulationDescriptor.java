@@ -13,25 +13,13 @@ public class SimulationDescriptor {
     public List<FactMapping> getAllFactMappings() {
         return factMappings.entrySet().stream().map(Map.Entry::getValue).collect(toList());
     }
-
-    public List<FactMapping> getFactMappingByType(FactMappingType type) {
-        return getAllFactMappings().stream().filter(fm -> fm.getType().equals(type)).collect(toList());
-    }
     
     public FactMapping getFactMappingsByName(String factName) {
         return factMappings.get(factName);
     }
 
-    public FactMapping addGivenObject(String factName, Class<?> clazz) {
-        return addGenericObject(FactMappingType.GIVEN, factName, clazz);
-    }
-
-    public FactMapping addExpectedObject(String factName, Class<?> clazz) {
-        return addGenericObject(FactMappingType.EXPECTED, factName, clazz);
-    }
-
-    public FactMapping addGenericObject(FactMappingType type, String factName, Class<?> clazz) {
-        FactMapping column = new FactMapping(factName, type, clazz);
+    public FactMapping addGenericObject(String factName, Class<?> clazz) {
+        FactMapping column = new FactMapping(factName, clazz);
         if(factMappings.containsKey(factName)) {
             throw new IllegalArgumentException("Duplicated fact name, name '" + factName + "' already exists");
         }

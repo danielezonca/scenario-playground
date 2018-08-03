@@ -8,31 +8,26 @@ import static java.util.stream.Collectors.toList;
 
 public class FactMapping {
 
-    private final Map<String, Expression> expressions = new LinkedHashMap<>();
+    private final Map<Expression.ExpressionIdentifier, Expression> expressions = new LinkedHashMap<>();
     private final String factName;
-    private final FactMappingType type;
     private final Class<?> clazz;
 
-    public FactMapping(String factName, FactMappingType type, Class<?> clazz) {
+    public FactMapping(String factName, Class<?> clazz) {
         this.factName = factName;
-        this.type = type;
         this.clazz = clazz;
-    }
-
-    public FactMappingType getType() {
-        return type;
     }
 
     public String getFactName() {
         return factName;
     }
 
-    public Expression addExpression(String bindingName) {
-        Expression expression = new Expression(bindingName, clazz);
-        if(expressions.containsKey(bindingName)) {
-            throw new IllegalArgumentException("Duplicated binding, name '" + bindingName + "' already exists");
+    public Expression addExpression(String bindingName, FactMappingType type) {
+        Expression.ExpressionIdentifier expressionIdentifier = Expression.identifier(bindingName, type);
+        Expression expression = new Expression(expressionIdentifier, clazz);
+        if(expressions.containsKey(expressionIdentifier)) {
+            throw new IllegalArgumentException("Duplicated binding, name '" + bindingName + "' and type '" + type.name() + "' already exists");
         }
-        expressions.put(bindingName, expression);
+        expressions.put(expressionIdentifier, expression);
         return expression;
     }
 
@@ -40,8 +35,8 @@ public class FactMapping {
         return expressions.entrySet().stream().map(Map.Entry::getValue).collect(toList());
     }
 
-    public Expression getExpressionsByName(String bindingName) {
-        return expressions.get(bindingName);
+    public Expression getExpressionsByExpressionIdentifier(Expression.ExpressionIdentifier expressionIdentifier) {
+        return expressions.get(expressionIdentifier);
     }
 
     public Class<?> getClazz() {

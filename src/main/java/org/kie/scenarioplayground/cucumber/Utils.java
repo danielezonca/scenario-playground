@@ -100,7 +100,7 @@ public class Utils {
                             throw new IllegalArgumentException("Value '" + tableCell.getValue() + "' is not compatible with '" + factMapping.getClazz().getCanonicalName() + "'");
                         }
 
-                        FactMappingValue factMappingValue = new FactMappingValue(factName, expression.getName(), tableCell.getValue());
+                        FactMappingValue factMappingValue = new FactMappingValue(factName, expression.getExpressionIdentifier(), tableCell.getValue());
 
                         internalScenario.addMappingValue(factMappingValue);
                     }
@@ -110,19 +110,19 @@ public class Utils {
         return simulation;
     }
 
-    static private void generateFactMapping(TableRow header, Simulation simulation, Step step, FactMappingType keyword, ModelFactory modelFactory) {
+    static private void generateFactMapping(TableRow header, Simulation simulation, Step step, FactMappingType factMappingType, ModelFactory modelFactory) {
         List<String> errors = new ArrayList<>();
         Class<?> classMatched = modelFactory.getInstance(step.getText());
         SimulationDescriptor simulationDescriptor = simulation.getSimulationDescriptor();
         if (simulationDescriptor.getFactMappingsByName(getFactName(step)) != null) {
             return;
         }
-        FactMapping mappingElement = simulationDescriptor.addGenericObject(keyword, getFactName(step), classMatched);
+        FactMapping mappingElement = simulationDescriptor.addGenericObject(getFactName(step), classMatched);
         for (TableCell tableCell : header.getCells()) {
             String fieldBindingName = tableCell.getValue();
             String fieldName = Introspector.decapitalize(WordUtils.capitalizeFully(fieldBindingName).replaceAll("\\s+", ""));
             if (checkExpressionStep(classMatched, fieldName)) {
-                Expression expression = mappingElement.addExpression(fieldBindingName);
+                Expression expression = mappingElement.addExpression(fieldBindingName, factMappingType);
                 expression.addExpressionElement(fieldName);
             } else {
                 errors.add(fieldName);
