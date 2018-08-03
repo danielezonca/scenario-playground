@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -79,7 +80,9 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
                 for (FactMappingValue factMappingValue : scenario.getFactMappingValuesByFactName(factName)) {
 
-                    FactMapping factMapping = simulationDescriptor.getFactMapping(factMappingValue.getExpressionIdentifier());
+                    FactMapping factMapping = simulationDescriptor.getFactMapping(factMappingValue.getExpressionIdentifier(), factIdentifier)
+                            .orElseThrow(() -> new IllegalArgumentException(
+                                    "Impossible to find an expression with name '" + factMappingValue.getExpressionIdentifier().getName() + "'"));
 
                     final Function<Object, ?> converter = ClassConverterFactory.getConverter(factMapping.getClazz());
 

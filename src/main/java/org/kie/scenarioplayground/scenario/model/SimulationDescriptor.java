@@ -3,6 +3,7 @@ package org.kie.scenarioplayground.scenario.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,15 +19,19 @@ public class SimulationDescriptor {
     public Set<FactIdentifier> getFactIdentifiers() {
         return factMappings.stream().map(FactMapping::getFactIdentifier).collect(Collectors.toSet());
     }
+
+    public FactMapping getFactMappingByIndex(int index) {
+        return factMappings.get(index);
+    }
     
     public List<FactMapping> getFactMappingsByFactName(String factName) {
         return internalFilter(e -> e.getFactIdentifier().getName().equalsIgnoreCase(factName));
     }
 
-    public FactMapping getFactMapping(ExpressionIdentifier ei) {
-        return internalFilter(e -> e.getExpressionIdentifier().getName().equalsIgnoreCase(ei.getName()) &&
-                e.getExpressionIdentifier().getType().equals(ei.getType()))
-                .get(0);
+    public Optional<FactMapping> getFactMapping(ExpressionIdentifier ei, FactIdentifier factIdentifier) {
+        List<FactMapping> factMappings = internalFilter(e -> e.getExpressionIdentifier().equals(ei) &&
+                e.getFactIdentifier().equals(factIdentifier));
+        return factMappings.stream().findFirst();
     }
 
     public FactIdentifier newFactIdentifier(String factName, Class<?> clazz) {
@@ -42,34 +47,13 @@ public class SimulationDescriptor {
     }
 
     public FactMapping addFactMapping(int index, ExpressionIdentifier expressionIdentifier, FactIdentifier factIdentifier) {
+        if(getFactMapping(expressionIdentifier, factIdentifier).isPresent()) {
+            throw new IllegalArgumentException(
+                    String.format("An expression with name '%s' already exists for the fact '%s'", expressionIdentifier.getName(), factIdentifier.getName()));
+        }
         FactMapping factMapping = new FactMapping(expressionIdentifier, factIdentifier);
         factMappings.add(index, factMapping);
         return factMapping;
     }
-
-//
-//    public FactMapping addGenericObject(String factName, Class<?> clazz) {
-//        FactMapping column = new FactMapping(factName, clazz);
-//        if(factMappings.containsKey(factName)) {
-//            throw new IllegalArgumentException("Duplicated fact name, name '" + factName + "' already exists");
-//        }
-//        factMappings.put(factName, column);
-//        return column;
-//    }
-//
-//    public Expression addExpression(int index, String factName, Class<?> clazz, String bindingName, FactMappingType factMappingType) {
-//
-//        FactMapping factMapping = addGenericObject(factName, clazz);
-//        factMapping.addExpression()
-//    }
-//
-//    public Expression addExpression(int index, String factName) {
-//
-//    }
-//
-//    private FactMapping getOrCreateFactMapping(String factName, Class<?> clazz) {
-//        Optional<FactMapping> factMappingsByName = Optional.ofNullable(getFactMappingsByFactName(factName));
-//        return factMappingsByName.orElseGet(() -> addGenericObject(factName, clazz));
-//    }
 
 }

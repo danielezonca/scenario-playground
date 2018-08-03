@@ -100,9 +100,12 @@ public class Utils {
                             throw new IllegalArgumentException("Value '" + tableCell.getValue() + "' is not compatible with '" + factMapping.getClazz().getCanonicalName() + "'");
                         }
 
-                        FactMappingValue factMappingValue = new FactMappingValue(factName, factMapping.getExpressionIdentifier(), tableCell.getValue());
+                        if(internalScenario.getFactMappingValue(factName, factMapping.getExpressionIdentifier()).isPresent()) {
+                            // TODO manage duplicated mapping value?
+                            continue;
+                        }
 
-                        internalScenario.addMappingValue(factMappingValue);
+                        internalScenario.addMappingValue(factName, factMapping.getExpressionIdentifier(), tableCell.getValue());
                     }
                 }
             }
@@ -123,7 +126,8 @@ public class Utils {
             String fieldBindingName = tableCell.getValue();
             String fieldName = Introspector.decapitalize(WordUtils.capitalizeFully(fieldBindingName).replaceAll("\\s+", ""));
             ExpressionIdentifier expressionIdentifier = ExpressionIdentifier.identifier(fieldBindingName, factMappingType);
-            if (checkExpressionStep(classMatched, fieldName)) {
+            if (checkExpressionStep(classMatched, fieldName) &&
+                    !simulationDescriptor.getFactMapping(expressionIdentifier, factIdentifier).isPresent()) {
                 FactMapping factMapping = simulationDescriptor.addFactMapping(expressionIdentifier, factIdentifier);
                 Class<?> currentClazz = factMapping.getClazz();
                 try {

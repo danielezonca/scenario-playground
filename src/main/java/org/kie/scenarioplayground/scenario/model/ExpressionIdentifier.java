@@ -1,5 +1,7 @@
 package org.kie.scenarioplayground.scenario.model;
 
+import java.util.Objects;
+
 public class ExpressionIdentifier {
 
     private final String name;
@@ -20,5 +22,23 @@ public class ExpressionIdentifier {
 
     public static ExpressionIdentifier identifier(String name, FactMappingType type) {
         return new ExpressionIdentifier(name, type);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ExpressionIdentifier that = (ExpressionIdentifier) o;
+        return Objects.equals(name, that.name) &&
+                type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
     }
 }

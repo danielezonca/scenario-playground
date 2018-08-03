@@ -44,10 +44,11 @@ public class FeatureFileToInternalModelTest {
         assertEquals("Example 1", simulation.getScenarios().get(0).getDescription());
         final org.kie.scenarioplayground.scenario.model.Scenario scenarioOne = simulation.getScenarios().get(0);
         Assertions.assertThat(scenarioOne.getFactNames())
-                .containsExactly("aCase:", "aProduct:", "someCaseDetail:", "IexpectNextDetail:");
+                .containsExactlyInAnyOrder("aCase:", "aProduct:", "someCaseDetail:", "IexpectNextDetail:");
         Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("aCase:")).hasSize(1);
         Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("aProduct:")).hasSize(2);
-        Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("someCaseDetail:")).hasSize(18);
+        // TOOD if we will merge multiple mapping we will have back 18 values for someCaseDetails (see Utils.convertScenario(103) )
+        Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("someCaseDetail:")).hasSize(3);
         Assertions.assertThat(scenarioOne.getFactMappingValuesByFactName("IexpectNextDetail:")).hasSize(2);
 
         // Example 2
