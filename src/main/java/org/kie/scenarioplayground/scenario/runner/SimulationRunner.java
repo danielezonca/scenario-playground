@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,6 +30,7 @@ import org.kie.scenarioplayground.scenario.model.FactIdentifier;
 import org.kie.scenarioplayground.scenario.model.FactMapping;
 import org.kie.scenarioplayground.scenario.model.FactMappingType;
 import org.kie.scenarioplayground.scenario.model.FactMappingValue;
+import org.kie.scenarioplayground.scenario.model.FactMappingValueOperator;
 import org.kie.scenarioplayground.scenario.model.Scenario;
 import org.kie.scenarioplayground.scenario.model.Simulation;
 import org.kie.scenarioplayground.scenario.model.SimulationDescriptor;
@@ -64,7 +64,7 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
         // TODO refactor to a single container object
         Map<FactIdentifier, Map<String, Object>> expected = new HashMap<>();
-        Map<FactIdentifier, Map<String, FactMappingValue.Operator>> expectedOperator = new HashMap<>();
+        Map<FactIdentifier, Map<String, FactMappingValueOperator>> expectedOperator = new HashMap<>();
 
         for (Scenario scenario : simulation.getScenarios()) {
 
@@ -73,7 +73,7 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
             for (String factName : scenario.getFactNames()) {
 
                 Map<FactMapping, Object> params = new HashMap<>();
-                Map<FactMapping, FactMappingValue.Operator> operators = new HashMap<>();
+                Map<FactMapping, FactMappingValueOperator> operators = new HashMap<>();
                 List<FactMapping> factMappings = simulationDescriptor.getFactMappingsByFactName(factName);
 
                 FactIdentifier factIdentifier = factMappings.get(0).getFactIdentifier();
@@ -92,9 +92,9 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
 
                 Map<String, Object> paramsGiven = filterByType(params, FactMappingType.GIVEN);
                 Map<String, Object> paramsExpected = filterByType(params, FactMappingType.EXPECTED);
-                Map<String, FactMappingValue.Operator> operatorsExpected = filterByType(operators, FactMappingType.EXPECTED);
+                Map<String, FactMappingValueOperator> operatorsExpected = filterByType(operators, FactMappingType.EXPECTED);
 
-                if(!paramsGiven.isEmpty()) {
+                if (!paramsGiven.isEmpty()) {
                     try {
                         Object instanceToInsert = fillBean(factIdentifier.getClazz(), paramsGiven);
                         given.computeIfAbsent(factName, k -> new ArrayList<>()).add(instanceToInsert);
@@ -102,11 +102,10 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
                         throw new IllegalArgumentException("Impossible to populate bean '" + factIdentifier.getClazz().getCanonicalName() + "'");
                     }
                 }
-                if(!paramsExpected.isEmpty()) {
+                if (!paramsExpected.isEmpty()) {
                     expected.put(factIdentifier, paramsExpected);
                     expectedOperator.put(factIdentifier, operatorsExpected);
                 }
-
             }
 
             for (Object o : given.values().stream().flatMap(Collection::stream).collect(toList())) {
@@ -182,10 +181,10 @@ public class SimulationRunner implements ScenarioRunner<List<Map<String, Boolean
     }
 
     private Class<BaseBatchFluent<?, ?>> resolveClass(Class<?> clazz) {
-        if(BaseBatchFluent.class.equals(clazz)) {
+        if (BaseBatchFluent.class.equals(clazz)) {
             return (Class<BaseBatchFluent<?, ?>>) clazz;
         }
-        if(clazz == null) {
+        if (clazz == null) {
             throw new IllegalArgumentException();
         }
         return resolveClass(clazz.getSuperclass());

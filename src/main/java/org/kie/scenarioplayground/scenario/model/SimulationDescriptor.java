@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
+@Portable
 public class SimulationDescriptor {
 
     private final List<FactMapping> factMappings = new ArrayList<>();
@@ -23,7 +26,7 @@ public class SimulationDescriptor {
     public FactMapping getFactMappingByIndex(int index) {
         return factMappings.get(index);
     }
-    
+
     public List<FactMapping> getFactMappingsByFactName(String factName) {
         return internalFilter(e -> e.getFactIdentifier().getName().equalsIgnoreCase(factName));
     }
@@ -47,13 +50,13 @@ public class SimulationDescriptor {
     }
 
     public FactMapping addFactMapping(int index, ExpressionIdentifier expressionIdentifier, FactIdentifier factIdentifier) {
-        if(getFactMapping(expressionIdentifier, factIdentifier).isPresent()) {
+        if (getFactMapping(expressionIdentifier, factIdentifier).isPresent()) {
             throw new IllegalArgumentException(
-                    String.format("An expression with name '%s' already exists for the fact '%s'", expressionIdentifier.getName(), factIdentifier.getName()));
+                    new StringBuilder().append("An expression with name '").append(expressionIdentifier.getName())
+                            .append("' already exists for the fact '").append(factIdentifier.getName()).append("'").toString());
         }
         FactMapping factMapping = new FactMapping(expressionIdentifier, factIdentifier);
         factMappings.add(index, factMapping);
         return factMapping;
     }
-
 }

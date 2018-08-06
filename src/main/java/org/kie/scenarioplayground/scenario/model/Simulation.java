@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
+@Portable
 public class Simulation {
 
     private final SimulationDescriptor simulationDescriptor = new SimulationDescriptor();
@@ -26,5 +29,4 @@ public class Simulation {
         scenarios.add(scenario);
         return scenario;
     }
-
 }
